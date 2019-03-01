@@ -82,7 +82,7 @@ class WaitTime
 
 };
 
-class zeroCrossing : public WaitTime {
+class zeroCrossing  {
 	// Class Member Variables
 	// These are initialized at startup
   int aPin;
@@ -107,9 +107,11 @@ class zeroCrossing : public WaitTime {
   {
     // check to see if it's time to change state
 
-    boolean waiting = crossingtimer();
-    if(waiting)
-    {
+    //boolean waiting = crossingtimer();
+    
+    unsigned long currentMillis = millis();
+    if(currentMillis - previousMillis >= 500){
+      previousMillis = currentMillis;  // Remember the time
           // read the input on analog pin 0:
       int sensorValue = analogRead(aPin);
 
@@ -125,9 +127,10 @@ int getMinValue()
     // check to see if it's time to change state
     int max = 0;
     int min = 1023;
-    boolean waiting = crossingtimer();
-    if(waiting)
-    {
+    
+    unsigned long currentMillis = millis();  
+    if(currentMillis - previousMillis >= 500){
+      previousMillis = currentMillis;  // Remember the time
           // read the input on analog pin 0:
       int sensorValue = analogRead(aPin);
 
@@ -135,7 +138,7 @@ int getMinValue()
          min=sensorValue;
       }
     }
-   return max;
+   return min;
   }
 
 };
@@ -197,14 +200,16 @@ int getMinValue()
 }; */
 
 
-int adc_max = 680;      //Reemplazar por valor adc_max entregado por el sketch: volt_ac_cal
-int adc_min = 374;      //Reemplazar por valor adc_min entregado por el sketch: volt_ac_cal
+int adc_max = 680;      //Reemplazar por valor adc_max entregado 
+int adc_min = 374;      //Reemplazar por valor adc_min entregado
 float volt_multi = 120; //Reemplazar por el "voltaje ac rms" entregado por un multimetro
 float volt_multi_p;
 float volt_multi_n;
 
 WaitTime led1(11, 123, 400);
 WaitTime led2(12, 350, 350);
+
+zeroCrossing  Crossing(0);
 
 void setup() {
   pinMode(8, OUTPUT);
@@ -214,4 +219,6 @@ void setup() {
 void loop() {
     led1.Update();
     led2.Update();
+    Crossing.getMaxValue();
+    Crossing.getMinValue();
 }
